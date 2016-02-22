@@ -1,0 +1,3 @@
+// rustSwaggerToMd
+fn main () {
+}

@@ -1,0 +1,16 @@
+[package]
+name = "swagger_to_md"
+version = "1.0.0"
+description = "Transform swagger to markdown"
+keywords = ["swagger","markdown","transform","md","compile","html"]
+
+[lib]
+name = "swagger_to_md"
+path = "main.rs"
+
+[[bin]]
+name = "swagger_to_md"
+path = "bin/cli.rs"
+
+[dependencies]
+getopts = "0.2.4"
