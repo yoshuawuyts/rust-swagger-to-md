@@ -1,10 +1,14 @@
 extern crate swagger_to_md;
 extern crate getopts;
 
-use swagger_to_md::swagger_to_md as lib;
-use swagger_to_md::Options as lib_Options;
+use std::io::BufReader;
 use getopts::Options;
+use std::fs::File;
+use std::io::Read;
 use std::env;
+
+use swagger_to_md::Options as lib_Options;
+use swagger_to_md::swagger_to_md as lib;
 
 // parse cli args and run lib
 fn main () {
@@ -20,6 +24,13 @@ fn main () {
     Err(f) => { panic!(f.to_string()) }
   };
 
+  // help command
+  if matches.opt_present("h") {
+    print_usage(&program, options);
+    return;
+  }
+
+  // parse options
   let mut lib_options = lib_Options {
     yaml: false,
   };
@@ -28,11 +39,21 @@ fn main () {
     lib_options.yaml = true;
   }
 
-  if matches.opt_present("h") {
-    print_usage(&program, options);
+  // call lib with args and opts
+  if !matches.free.is_empty() {
+    let input = matches.free.clone();
+
+    // todo: handle fd error explicitely
+    let f = File::open(&input[0]).unwrap();
+    let mut rs = BufReader::new(f);
+    let mut file = String::new();
+    rs.read_to_string(&mut file).unwrap();
+
+    lib(&file, lib_options);
   } else {
-    lib(&program, lib_options);
-  }
+    print_usage(&program, options);
+    return;
+  };
 }
 
 // print CLI usage

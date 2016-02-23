@@ -1,12 +1,8 @@
 [package]
+description = "Transform swagger to markdown"
+keywords = ["swagger", "markdown", "transform", "md", "compile", "html"]
 name = "swagger_to_md"
 version = "1.0.0"
-description = "Transform swagger to markdown"
-keywords = ["swagger","markdown","transform","md","compile","html"]
-
-[lib]
-name = "swagger_to_md"
-path = "main.rs"
 
 [[bin]]
 name = "swagger_to_md"
@@ -14,3 +10,10 @@ path = "bin/cli.rs"
 
 [dependencies]
 getopts = "0.2.4"
+serde = "0.6.14"
+serde_json = "0.6.0"
+serde_macros = "0.6.14"
+
+[lib]
+name = "swagger_to_md"
+path = "main.rs"
