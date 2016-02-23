@@ -6,6 +6,7 @@ use getopts::Options;
 use std::fs::File;
 use std::io::Read;
 use std::env;
+use std::io;
 
 use swagger_to_md::Options as lib_Options;
 use swagger_to_md::swagger_to_md as lib;
@@ -41,6 +42,7 @@ fn main () {
 
   // call lib with args and opts
   if !matches.free.is_empty() {
+    // parse cli arg
     let input = matches.free.clone();
 
     // todo: handle fd error explicitely
@@ -51,8 +53,12 @@ fn main () {
 
     lib(&file, lib_options);
   } else {
-    print_usage(&program, options);
-    return;
+    // parse stdin
+    let mut input = String::new();
+    match io::stdin().read_line(&mut input) {
+      Ok(_) => lib(&input, lib_options),
+      Err(err) => println!("error: {}", err),
+    }
   };
 }
 
