@@ -44,10 +44,17 @@ fn collect_values (json: &Value) -> Option<Vec<Swagger_value>> {
       // keys
       if let Some(data) = raw_data.as_object() {
         for (method, raw_data) in data.iter() {
-          let desc = match raw_data.find_path("description") {
-            Some(s) => s,
-            None => str::from_utf8("").unwrap(),
+          let dft = String::new();
+          let desc = match raw_data.lookup("description") {
+            Some(s) => match s.as_string() {
+              Some(s) => s,
+              None => dft.as_str(),
+            },
+            None => dft.as_str(),
           };
+          // create struct
+          // push to vector
+          // vec.push(val);
           println!("{:?}", desc);
         }
       } else {
