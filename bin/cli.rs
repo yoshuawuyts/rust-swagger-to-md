@@ -51,12 +51,18 @@ fn main () {
     let mut file = String::new();
     rs.read_to_string(&mut file).unwrap();
 
-    lib(&file, lib_options);
+    match lib(&file, lib_options) {
+      Some(m) => println!("{}", m),
+      None => println!("noooope"),
+    }
   } else {
     // parse stdin
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
-      Ok(_) => lib(&input, lib_options),
+      Ok(_) => match lib(&input, lib_options) {
+        Some(m) => println!("{}", m),
+        None => println!("noooope"),
+      },
       Err(err) => println!("error: {}", err),
     }
   };
