@@ -9,12 +9,13 @@ $ cargo install rust-swagger-to-md
 ```
 
 ## Usage
-```rs
-extern crate rust-swagger-to-md;
-```
+```txt
+Usage: swagger_to_md <file> [options]
 
-## API
-### rustSwaggerToMd
+Options:
+    -h, --help          Output usage information
+    -y, --yaml          Parse spec as YAML
+```
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
