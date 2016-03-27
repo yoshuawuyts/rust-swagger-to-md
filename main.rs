@@ -14,7 +14,7 @@ pub struct Options {
 
 // disassembled JSON values
 struct SwaggerValue<'a> {
-  method: &'a str,
+  method: String,
   path: &'a str,
   summary: &'a str,
 }
@@ -33,33 +33,34 @@ pub fn swagger_to_md<'a> (inp: &str, opts: Options) -> Option<String> {
   };
 
   let mut res = String::new();
-  res.push_str("<table>\n");
-  res.push_str("<tr>\n");
-  res.push_str("<td><b>Path</b></td>\n");
-  res.push_str("<td><b>Method</b></td>\n");
-  res.push_str("<td><b>Summary</b></td>\n");
-  res.push_str("</tr>\n");
+  let header = SwaggerValue {
+    method: "<b>Method</b>".into(),
+    path: "<b>Path</b>",
+    summary: "<b>Summary</b>",
+  };
+  res.push_str(&format_string(&header));
+
   for row in rows {
-    res.push_str("<tr>\n");
-    res.push_str("<td>");
-    res.push_str(&row.path);
-    res.push_str("</td>\n");
-    res.push_str("<td>");
-    res.push_str(&row.method.to_uppercase());
-    res.push_str("</td>\n");
-    res.push_str("<td>");
-    res.push_str(&row.summary);
-    res.push_str("</td>\n");
-    res.push_str("</tr>\n");
+    res.push_str(&format_string(&row));
   }
   res.push_str("</table>\n");
 
   return Some(res);
 }
 
+fn format_string<'a> (row: &SwaggerValue) -> String {
+  let mut res = String::new();
+  res.push_str("<tr>\n");
+  res.push_str(&format!("<td>{}</td>\n", row.path));
+  res.push_str(&format!("<td>{}</td>\n", row.method));
+  res.push_str(&format!("<td>{}</td>\n", row.summary));
+  res.push_str("</tr>\n");
+  return res;
+}
+
 // extract values from JSON struct
 // .paths[http_method].summary
-fn collect_values <'a> (json: &Value) -> Option<Vec<SwaggerValue>> {
+fn collect_values<'a> (json: &'a Value) -> Option<Vec<SwaggerValue<'a>>> {
   let mut vec = Vec::new();
   let raw_paths = json.lookup("paths").unwrap();
 
@@ -85,8 +86,9 @@ fn collect_values <'a> (json: &Value) -> Option<Vec<SwaggerValue>> {
         None => dft,
       };
 
+      let uc_method: String = method.to_uppercase();
       let val = SwaggerValue {
-        method: &method,
+        method: uc_method,
         path: &path,
         summary: &summary,
       };
