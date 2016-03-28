@@ -1,6 +1,8 @@
 [package]
 description = "Transform swagger to markdown"
-keywords = ["swagger", "markdown", "transform", "md", "compile", "html"]
+keywords = ["swagger", "markdown", "transform", "compile", "html"]
+license = "MIT"
+authors = ["Yoshua Wuyts"]
 name = "swagger_to_md"
 version = "1.0.0"
 
