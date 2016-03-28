@@ -20,16 +20,18 @@ struct SwaggerValue<'a> {
 }
 
 // transform swagger into markdown
-pub fn swagger_to_md<'a> (inp: &str, opts: Options) -> Option<String> {
+pub fn swagger_to_md<'a>(inp: &str, opts: Options)
+  -> Result<Option<String>, &'static str>
+{
   let json: Value = serde_json::from_str(inp).unwrap();
 
   if opts.yaml {
-    println!("--yaml is not implemented yet, careful");
+    return Err("--yaml flag is not implemented");
   }
 
   let rows = match collect_values(&json) {
     Some(m) => m,
-    None => return None
+    None => return Ok(None)
   };
 
   let mut res = String::new();
@@ -45,9 +47,10 @@ pub fn swagger_to_md<'a> (inp: &str, opts: Options) -> Option<String> {
   }
   res.push_str("</table>\n");
 
-  return Some(res);
+  return Ok(Some(res));
 }
 
+// format Swagger into HTML tables
 fn format_string<'a> (row: &SwaggerValue) -> String {
   let mut res = String::new();
   res.push_str("<tr>\n");

@@ -52,18 +52,24 @@ fn main () {
     rs.read_to_string(&mut file).unwrap();
 
     match lib(&file, lib_options) {
-      Some(m) => println!("{}", m),
-      None => println!("noooope"),
+      Ok(v) => match v {
+        Some(m) => println!("{}", m),
+        None => println!(""),
+      },
+      Err(e) => println!("Error found {}", e)
     }
   } else {
     // parse stdin
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
       Ok(_) => match lib(&input, lib_options) {
-        Some(m) => println!("{}", m),
-        None => println!("noooope"),
+        Ok(v) => match v {
+          Some(m) => println!("{}", m),
+          None => println!(""),
+        },
+        Err(e) => println!("Error found {}", e)
       },
-      Err(err) => println!("error: {}", err),
+      Err(e) => println!("Error found {}", e),
     }
   };
 }
