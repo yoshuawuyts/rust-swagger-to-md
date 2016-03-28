@@ -46,7 +46,10 @@ fn main () {
     let input = matches.free.clone();
 
     // todo: handle fd error explicitely
-    let f = File::open(&input[0]).unwrap();
+    let f = match File::open(&input[0]) {
+      Ok(v) => v,
+      Err(_) => return println!("File {} does not exist", &input[0]),
+    };
     let mut rs = BufReader::new(f);
     let mut file = String::new();
     rs.read_to_string(&mut file).unwrap();
