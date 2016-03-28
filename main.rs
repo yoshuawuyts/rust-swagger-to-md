@@ -23,15 +23,21 @@ struct SwaggerValue<'a> {
 pub fn swagger_to_md<'a>(inp: &str, opts: Options)
   -> Result<Option<String>, &'static str>
 {
-  let json: Value = serde_json::from_str(inp).unwrap();
+  let json: Value = match serde_json::from_str(inp) {
+    Ok(v) => v,
+    Err(_) => return Err("Could not parse JSON"),
+  };
 
   if opts.yaml {
     return Err("--yaml flag is not implemented");
   }
 
   let rows = match collect_values(&json) {
-    Some(m) => m,
-    None => return Ok(None)
+    Ok(v) => match v {
+      Some(m) => m,
+      None => return Ok(None)
+    },
+    Err(e) => return Err(e)
   };
 
   let mut res = String::new();
@@ -63,27 +69,32 @@ fn format_string<'a> (row: &SwaggerValue) -> String {
 
 // extract values from JSON struct
 // .paths[http_method].summary
-fn collect_values<'a> (json: &'a Value) -> Option<Vec<SwaggerValue<'a>>> {
+fn collect_values<'a> (json: &'a Value) ->
+  Result<Option<Vec<SwaggerValue<'a>>>, &'static str>
+{
   let mut vec = Vec::new();
-  let raw_paths = json.lookup("paths").unwrap();
+  let raw_paths = match json.lookup("paths") {
+    Some(v) => v,
+    None => return Ok(None),
+  };
 
   let paths = match raw_paths.as_object() {
-    Some(path) => path,
-    None => return None,
+    Some(v) => v,
+    None => return Ok(None),
   };
 
   for (path, raw_data) in paths.iter() {
     let data = match raw_data.as_object() {
-      Some(path) => path,
-      None => return None,
+      Some(v) => v,
+      None => return Ok(None),
     };
 
     for (method, raw_data) in data.iter() {
       let dft = "";
 
       let summary = match raw_data.lookup("description") {
-        Some(s) => match s.as_string() {
-          Some(s) => s,
+        Some(v) => match v.as_string() {
+          Some(v) => v,
           None => dft,
         },
         None => dft,
@@ -100,5 +111,5 @@ fn collect_values<'a> (json: &'a Value) -> Option<Vec<SwaggerValue<'a>>> {
     }
   }
 
-  return Some(vec);
+  return Ok(Some(vec));
 }

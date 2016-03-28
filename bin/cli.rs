@@ -54,7 +54,7 @@ fn main () {
     match lib(&file, lib_options) {
       Ok(v) => match v {
         Some(m) => println!("{}", m),
-        None => println!(""),
+        None => println!("No data found"),
       },
       Err(e) => println!("Error found {}", e)
     }
@@ -65,7 +65,7 @@ fn main () {
       Ok(_) => match lib(&input, lib_options) {
         Ok(v) => match v {
           Some(m) => println!("{}", m),
-          None => println!(""),
+          None => println!("No data found"),
         },
         Err(e) => println!("Error found {}", e)
       },
